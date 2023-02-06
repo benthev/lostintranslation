@@ -1,5 +1,5 @@
 #Specify and load libraries
-librariesToLoad <- c('jsonlite', 'translateR', 'utils')
+librariesToLoad <- c('jsonlite', 'googleLanguageR', 'utils', 'xml2')
 
 
 sapply(librariesToLoad, function(package) {
@@ -26,6 +26,15 @@ search()
 #Specify unique API Key
 #key <- PUTYOURAPIKEYHERE
 
+if (!exists("key")) {
+  print('INSERT YOUR API KEY ABOVE')
+  print('INSERT YOUR API KEY ABOVE')
+  print('INSERT YOUR API KEY ABOVE')
+  print('INSERT YOUR API KEY ABOVE')
+  print('INSERT YOUR API KEY ABOVE')
+} 
+
+
 #Specify main translation paramaters
 #What to translate
 translate_this <- 'Greetings citizen! how are you doing this fine day?'
@@ -35,13 +44,15 @@ default_target_language <- 'zh-CN'
 
 
 #Print language codes
-getGoogleLanguages()
+fromJSON(URLencode(paste0("https://translation.googleapis.com/language/translate/v2/languages", 
+                          "?key=", key)))
 
 
 
 #Create simple translation function
-google_translate <- function(translate_this, source_lang, target_lang, key) {
+google_translate <- function(translate_this, source_lang = 'en', target_lang = 'zh-CN', key = key) {
   base_url <- 'https://www.googleapis.com/language/translate/v2'
+  translate_this <- xml_text(read_html(charToRaw(translate_this)))
   query <- URLencode(paste0(base_url, '?key=', key, '&q=', translate_this, '&source=', source_lang, '&target=', target_lang))
   result <- fromJSON(query)
   text <- unlist(result)
@@ -106,3 +117,6 @@ lost_in_translation(original_text = 'need air-conditioning lest leisure take its
 
 
 lost_in_translation(original_text = 'angelheaded hipsters burning for the ancient heavenly connection to the starry dynamo in the machinery of night', iterations = 100, source_lang = default_source_language, target_lang = 'ta', key = key, print_intermediates = TRUE)
+
+lost_in_translation(original_text = "Somebody once told me the world is gonna roll me. I ain't the sharpest tool in the shed. 
+She was looking kind of dumb with her finger and her thumb In the shape of an 'L' on her forehead", iterations = 100, source_lang = default_source_language, target_lang = 'zh-CN', key = key, print_intermediates = TRUE)
